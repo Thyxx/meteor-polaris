@@ -1,10 +1,17 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import Index from '../pages/index'
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Page } from '@shopify/polaris';
+import Index from '../pages/index';
+import Callback from '../pages/callback';
 
 const App = () => (
   <Router>
-    <Route exact name="index" path="/" component={Index}/>
+    <Switch>
+      <Page title="Shopify Manager">
+        <Route exact name="index" path="/" component={Index}/>
+        <Route exact path="/callback/" component={Callback}/>
+      </Page>
+    </Switch>
   </Router>
 );
 

@@ -1,173 +1,94 @@
 import React, { Component } from 'react';
+import { Meteor } from 'meteor/meteor';
 import {
   Layout,
-  Page,
-  FooterHelp,
   Card,
-  Link,
   Button,
   FormLayout,
   TextField,
-  AccountConnection,
-  ChoiceList,
-  SettingToggle,
 } from '@shopify/polaris';
+import { Stores } from '../../api/stores/stores.js';
+import StoresListContainer from '../containers/storesListContainer';
 
-class Index extends Component {
+export default class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      first: '',
-      last: '',
-      email: '',
-      checkboxes: [],
-      connected: false,
+      storeName: '',
+      redirectUrl: '',
+      alreadyExists: false,
     };
   }
 
+  valueUpdater(field) {
+    return value => this.setState({ [field]: value });
+  }
+
+  handleChange(value) {
+    this.setState({ storeName: value });
+    Meteor.subscribe('Stores', () => {
+      const storeExists = Stores.find({ storeName: value }).fetch();
+      if (storeExists.length > 0) {
+        this.setState({
+          alreadyExists: true,
+        });
+      } else {
+        this.setState({
+          alreadyExists: false,
+        });
+      }
+    });
+    Meteor.call('shopify.getRedirectUrl', value, (err, res) => {
+      this.setState({ redirectUrl: res });
+    });
+  }
+
+  handleConnect() {
+    window.open(this.state.redirectUrl, '_self');
+    this.setState({
+      storeName: '',
+    });
+  }
+
   render() {
-    const breadcrumbs = [
-      {content: 'Sample apps'},
-      {content: 'Create React App'},
-    ];
-    const primaryAction = {content: 'New product'};
-    const secondaryActions = [{content: 'Import', icon: 'import'}];
-
-    const choiceListItems = [
-      {label: 'I accept the Terms of Service', value: 'false'},
-      {label: 'I consent to receiving emails', value: 'false2'},
-    ];
-
     return (
-      <Page
-        title="Polaris"
-        breadcrumbs={breadcrumbs}
-        primaryAction={primaryAction}
-        secondaryActions={secondaryActions}
-      >
+      <div>
         <Layout>
           <Layout.AnnotatedSection
-            title="Style"
-            description="Customize the style of your checkout"
+            title="Connect your Shopify Store"
+            description="To use the aplication, you need to add your Shopify stores."
           >
-            <SettingToggle
-              action={{
-                content: 'Customize Checkout',
-              }}
+            <Card
+              title="Add a store"
+              sectioned
             >
-              Upload your store’s logo, change colors and fonts, and more.
-            </SettingToggle>
-          </Layout.AnnotatedSection>
-
-         {this.renderAccount()}
-
-          <Layout.AnnotatedSection
-            title="Form"
-            description="A sample form using Polaris components."
-          >
-            <Card sectioned>
               <FormLayout>
-                <FormLayout.Group>
+                <FormLayout.Group condensed>
                   <TextField
-                    value={this.state.first}
-                    label="First Name"
-                    placeholder="Tom"
-                    onChange={this.valueUpdater('first')}
-                  />
-                  <TextField
-                    value={this.state.last}
-                    label="Last Name"
-                    placeholder="Ford"
-                    onChange={this.valueUpdater('last')}
+                    value={this.state.storeName}
+                    placeholder="my-store"
+                    prefix="https://"
+                    suffix=".myshopify.com"
+                    onChange={this.handleChange.bind(this)}
+                    error={this.state.alreadyExists ? 'You are already using this store.' : false}
+                    connectedRight={
+                      <Button
+                        primary
+                        submit
+                        disabled={!(this.state.storeName && !this.state.alreadyExists)}
+                        onClick={this.handleConnect.bind(this)}
+                      >
+                        Connect
+                      </Button>
+                    }
                   />
                 </FormLayout.Group>
-
-                <TextField
-                  value={this.state.email}
-                  label="Email"
-                  placeholder="example@email.com"
-                  onChange={this.valueUpdater('email')}
-                />
-
-                <TextField
-                  multiline
-                  label="How did you hear about us?"
-                  placeholder="Website, ads, email, etc."
-                  value={this.state.autoGrow}
-                  onChange={this.valueUpdater('autoGrow')}
-                />
-
-                <ChoiceList
-                  allowMultiple
-                  choices={choiceListItems}
-                  selected={this.state.checkboxes}
-                  onChange={this.valueUpdater('checkboxes')}
-                />
-
-                <Button primary>Submit</Button>
               </FormLayout>
             </Card>
           </Layout.AnnotatedSection>
-
-          <Layout.Section>
-            <FooterHelp>For more details on Polaris, visit our <Link url="https://polaris.shopify.com">styleguide</Link>.</FooterHelp>
-          </Layout.Section>
-
+          <StoresListContainer/>
         </Layout>
-      </Page>
+      </div>
     );
-  }
-
-  valueUpdater(field) {
-    return (value) => this.setState({[field]: value});
-  }
-  toggleConnection() {
-    this.setState(({connected}) => ({connected: !connected}));
-  }
-
-  connectAccountMarkup() {
-    return (
-      <Layout.AnnotatedSection
-        title="Account"
-        description="Connect your account to your Shopify store."
-      >
-        <AccountConnection
-          action={{
-            content: 'Connect',
-            onAction: this.toggleConnection.bind(this, this.state),
-          }}
-          details="No account connected"
-          termsOfService={<p>By clicking Connect, you are accepting Sample’s <Link url="https://polaris.shopify.com">Terms and Conditions</Link>, including a commission rate of 15% on sales.</p>}
-        />
-      </Layout.AnnotatedSection>
-    );
-  }
-
-  disconnectAccountMarkup() {
-    return (
-      <Layout.AnnotatedSection
-          title="Account"
-          description="Disconnect your account from your Shopify store."
-        >
-        <AccountConnection
-          connected
-          action={{
-            content: 'Disconnect',
-            onAction: this.toggleConnection.bind(this, this.state),
-          }}
-          accountName="Tom Ford"
-          title={<Link url="http://google.com">Tom Ford</Link>}
-          details="Account id: d587647ae4"
-        />
-      </Layout.AnnotatedSection>
-    );
-  }
-
-  renderAccount() {
-    return this.state.connected
-      ? this.disconnectAccountMarkup()
-      : this.connectAccountMarkup();
   }
 }
-
-export default Index;

@@ -42,21 +42,20 @@ class Callback extends Component {
     });
     Meteor.call('shopify.createShop', this.state.code, this.state.shop, (err) => {
       if (err) {
+        console.log(err);
         this.setState({
           loading: false,
           error: true,
         });
       } else {
-
+        this.props.history.push('/');
       }
     });
   }
 
   render() {
     return (
-      <Page
-        title="Polaris"
-      >
+      <div>
         <Layout>
           <Layout.AnnotatedSection
             title="Style"
@@ -85,7 +84,7 @@ class Callback extends Component {
             <FooterHelp>For more details on Polaris, visit our <Link url="https://polaris.shopify.com">styleguide</Link>.</FooterHelp>
           </Layout.Section>
         </Layout>
-      </Page>
+      </div>
     );
   }
 }

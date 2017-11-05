@@ -24,7 +24,11 @@ class Index extends Component {
       storeName: '',
       redirectUrl: '',
       alreadyExists: false,
-      items: [],
+      items: [
+        {
+          attributeOne: 'You do not have a store connected yet.',
+        }
+      ],
     };
   }
 
@@ -37,16 +41,26 @@ class Index extends Component {
         array.push(
           {
             attributeOne: store.storeUrl,
-            actions: [{content: 'Remove'}],
+            actions: [{
+              content: 'Remove',
+              onAction: () => this.handleRemove(store._id),
+            }],
             persistActions: true,
             badges: [{content: 'Running', status: 'success'}],
           }
         );
       });
-      this.setState({
-        items: array,
-      });
+      if (array.length > 0) {
+        this.setState({
+          items: array,
+        });
+      }
     });
+  }
+
+  handleRemove (id) {
+    Meteor.call('shopify.removeShop', id);
+    // TODO: Redirect the user to his Shop to delete the App
   }
 
   handleChange(value) {
@@ -69,7 +83,10 @@ class Index extends Component {
   }
 
   handleConnect() {
-    window.open(this.state.redirectUrl);
+    window.open(this.state.redirectUrl, '_self');
+    this.setState({
+      storeName: '',
+    });
   }
 
   render() {
@@ -79,7 +96,7 @@ class Index extends Component {
     ];
 
     return (
-      <Page title="Shopify Manager">
+      <div>
         <Layout>
           <Layout.AnnotatedSection
             title="Connect your Shopify Store"
@@ -123,14 +140,13 @@ class Index extends Component {
               <ResourceList
                 items={this.state.items}
                 renderItem={(item, index) => {
-                  console.log(item);
                   return <ResourceList.Item key={index} {...item} />;
                 }}
               />
             </Card>
           </Layout.AnnotatedSection>
         </Layout>
-      </Page>
+      </div>
     );
   }
 

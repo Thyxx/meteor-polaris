@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Meteor } from 'meteor/meteor';
 import {
   Layout,
   Page,
@@ -9,110 +10,125 @@ import {
   FormLayout,
   TextField,
   AccountConnection,
+  ResourceList,
   ChoiceList,
+  TextStyle,
   SettingToggle,
 } from '@shopify/polaris';
+import { Stores } from '../../api/stores/stores.js';
 
 class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      first: '',
-      last: '',
-      email: '',
-      checkboxes: [],
-      connected: false,
+      storeName: '',
+      redirectUrl: '',
+      alreadyExists: false,
+      items: [],
     };
   }
 
-  render() {
-    const breadcrumbs = [
-      {content: 'Sample apps'},
-      {content: 'Create React App'},
-    ];
-    const primaryAction = {content: 'New product'};
-    const secondaryActions = [{content: 'Import', icon: 'import'}];
+  componentWillMount() {
+    // TODO: Add a method to check if the token is valid or not
+    Meteor.subscribe('Stores', () => {
+      const stores = Stores.find().fetch();
+      const array = [];
+      stores.map((store) => {
+        array.push(
+          {
+            attributeOne: store.storeUrl,
+            actions: [{content: 'Remove'}],
+            persistActions: true,
+            badges: [{content: 'Running', status: 'success'}],
+          }
+        );
+      });
+      this.setState({
+        items: array,
+      });
+    });
+  }
 
+  handleChange(value) {
+    this.setState({ storeName: value });
+    Meteor.subscribe('Stores', () => {
+      const storeExists = Stores.find({ storeName: value}).fetch();
+      if (storeExists.length > 0) {
+        this.setState({
+          alreadyExists: true,
+        });
+      } else {
+        this.setState({
+          alreadyExists: false,
+        });
+      }
+    });
+    Meteor.call('shopify.getRedirectUrl', value, (err, res) => {
+      this.setState({ redirectUrl: res });
+    });
+  }
+
+  handleConnect() {
+    window.open(this.state.redirectUrl);
+  }
+
+  render() {
     const choiceListItems = [
       {label: 'I accept the Terms of Service', value: 'false'},
       {label: 'I consent to receiving emails', value: 'false2'},
     ];
 
     return (
-      <Page
-        title="Polaris"
-        breadcrumbs={breadcrumbs}
-        primaryAction={primaryAction}
-        secondaryActions={secondaryActions}
-      >
+      <Page title="Shopify Manager">
         <Layout>
           <Layout.AnnotatedSection
-            title="Style"
-            description="Customize the style of your checkout"
+            title="Connect your Shopify Store"
+            description="To use the aplication, you need to add your Shopify stores."
           >
-            <SettingToggle
-              action={{
-                content: 'Customize Checkout',
-              }}
+            <Card
+              title="Store Name"
+              sectioned
             >
-              Upload your store’s logo, change colors and fonts, and more.
-            </SettingToggle>
-          </Layout.AnnotatedSection>
-
-         {this.renderAccount()}
-
-          <Layout.AnnotatedSection
-            title="Form"
-            description="A sample form using Polaris components."
-          >
-            <Card sectioned>
               <FormLayout>
-                <FormLayout.Group>
+                <FormLayout.Group condensed>
                   <TextField
-                    value={this.state.first}
-                    label="First Name"
-                    placeholder="Tom"
-                    onChange={this.valueUpdater('first')}
-                  />
-                  <TextField
-                    value={this.state.last}
-                    label="Last Name"
-                    placeholder="Ford"
-                    onChange={this.valueUpdater('last')}
+                    value={this.state.storeName}
+                    placeholder="my-store"
+                    prefix="https://"
+                    suffix=".myshopify.com"
+                    onChange={this.handleChange.bind(this)}
+                    error={this.state.alreadyExists ? 'You are already using this store.' : false}
+                    connectedRight={
+                      <Button
+                        primary
+                        submit
+                        disabled={this.state.storeName && !this.state.alreadyExists ? false : true}
+                        onClick={this.handleConnect.bind(this)}
+                      >
+                        Connect
+                      </Button>
+                    }
                   />
                 </FormLayout.Group>
-
-                <TextField
-                  value={this.state.email}
-                  label="Email"
-                  placeholder="example@email.com"
-                  onChange={this.valueUpdater('email')}
-                />
-
-                <TextField
-                  multiline
-                  label="How did you hear about us?"
-                  placeholder="Website, ads, email, etc."
-                  value={this.state.autoGrow}
-                  onChange={this.valueUpdater('autoGrow')}
-                />
-
-                <ChoiceList
-                  allowMultiple
-                  choices={choiceListItems}
-                  selected={this.state.checkboxes}
-                  onChange={this.valueUpdater('checkboxes')}
-                />
-
-                <Button primary>Submit</Button>
               </FormLayout>
             </Card>
           </Layout.AnnotatedSection>
-
-          <Layout.Section>
-            <FooterHelp>For more details on Polaris, visit our <Link url="https://polaris.shopify.com">styleguide</Link>.</FooterHelp>
-          </Layout.Section>
-
+          <Layout.AnnotatedSection
+            title="Manage your connected Stores"
+            description="Here you can manage your connected stores."
+          >
+            <Card
+              title="List of Stores"
+            >
+              <ResourceList
+                items={this.state.items}
+                renderItem={(item, index) => {
+                  console.log(item);
+                  return <ResourceList.Item key={index} {...item} />;
+                }}
+              />
+            </Card>
+          </Layout.AnnotatedSection>
         </Layout>
       </Page>
     );
@@ -120,9 +136,6 @@ class Index extends Component {
 
   valueUpdater(field) {
     return (value) => this.setState({[field]: value});
-  }
-  toggleConnection() {
-    this.setState(({connected}) => ({connected: !connected}));
   }
 
   connectAccountMarkup() {

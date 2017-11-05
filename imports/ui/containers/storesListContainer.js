@@ -3,7 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Stores } from '../../api/stores/stores';
 import StoresList from '../components/storesList';
 
-export default StoresListContainer = withTracker(() => {
+const StoresListContainer = withTracker(() => {
   const storesHandle = Meteor.subscribe('Stores');
   const loading = !storesHandle.ready();
   const stores = Stores.find().fetch();
@@ -14,3 +14,5 @@ export default StoresListContainer = withTracker(() => {
     storesExists,
   };
 })(StoresList);
+
+export default StoresListContainer;

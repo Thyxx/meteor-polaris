@@ -2,23 +2,15 @@ import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import {
   Layout,
-  Page,
-  FooterHelp,
   Card,
-  Link,
   Button,
   FormLayout,
   TextField,
-  AccountConnection,
-  ResourceList,
-  ChoiceList,
-  TextStyle,
-  SettingToggle,
 } from '@shopify/polaris';
 import { Stores } from '../../api/stores/stores.js';
-import StoresListContainer from '../containers/storesListContainer'
+import StoresListContainer from '../containers/storesListContainer';
 
-class Index extends Component {
+export default class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,13 +21,13 @@ class Index extends Component {
   }
 
   valueUpdater(field) {
-    return (value) => this.setState({[field]: value});
+    return value => this.setState({ [field]: value });
   }
 
   handleChange(value) {
     this.setState({ storeName: value });
     Meteor.subscribe('Stores', () => {
-      const storeExists = Stores.find({ storeName: value}).fetch();
+      const storeExists = Stores.find({ storeName: value }).fetch();
       if (storeExists.length > 0) {
         this.setState({
           alreadyExists: true,
@@ -59,11 +51,6 @@ class Index extends Component {
   }
 
   render() {
-    const choiceListItems = [
-      {label: 'I accept the Terms of Service', value: 'false'},
-      {label: 'I consent to receiving emails', value: 'false2'},
-    ];
-
     return (
       <div>
         <Layout>
@@ -88,7 +75,7 @@ class Index extends Component {
                       <Button
                         primary
                         submit
-                        disabled={this.state.storeName && !this.state.alreadyExists ? false : true}
+                        disabled={!(this.state.storeName && !this.state.alreadyExists)}
                         onClick={this.handleConnect.bind(this)}
                       >
                         Connect
@@ -105,5 +92,3 @@ class Index extends Component {
     );
   }
 }
-
-export default Index;

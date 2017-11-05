@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Page } from '@shopify/polaris';
-import Index from '../pages/index'
-import Callback from '../pages/callback'
+import Index from '../pages/index';
+import Callback from '../pages/callback';
 
 const App = () => (
   <Router>

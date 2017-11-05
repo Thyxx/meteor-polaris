@@ -1,21 +1,15 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import {
   Layout,
-  Page,
   FooterHelp,
-  Card,
   Link,
-  Button,
-  FormLayout,
-  TextField,
-  AccountConnection,
-  ChoiceList,
   SettingToggle,
   Banner,
 } from '@shopify/polaris';
 
-class Callback extends Component {
+export default class Callback extends Component {
   constructor() {
     super();
     this.state = {
@@ -23,7 +17,7 @@ class Callback extends Component {
       shop: '',
       loading: false,
       error: false,
-    }
+    };
   }
 
   componentDidMount() {
@@ -89,4 +83,7 @@ class Callback extends Component {
   }
 }
 
-export default Callback;
+Callback.propTypes = {
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+};

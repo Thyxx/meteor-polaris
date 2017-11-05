@@ -60,6 +60,7 @@ export default class StoresList extends Component {
   }
 
   render() {
+    // TODO: Add method to check if the token is valid
     return (
       <Layout.AnnotatedSection
         title="Manage your connected Stores"

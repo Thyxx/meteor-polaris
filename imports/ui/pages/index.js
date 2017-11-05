@@ -16,6 +16,7 @@ import {
   SettingToggle,
 } from '@shopify/polaris';
 import { Stores } from '../../api/stores/stores.js';
+import StoresListContainer from '../containers/storesListContainer'
 
 class Index extends Component {
   constructor(props) {
@@ -24,43 +25,11 @@ class Index extends Component {
       storeName: '',
       redirectUrl: '',
       alreadyExists: false,
-      items: [
-        {
-          attributeOne: 'You do not have a store connected yet.',
-        }
-      ],
     };
   }
 
-  componentWillMount() {
-    // TODO: Add a method to check if the token is valid or not
-    Meteor.subscribe('Stores', () => {
-      const stores = Stores.find().fetch();
-      const array = [];
-      stores.map((store) => {
-        array.push(
-          {
-            attributeOne: store.storeUrl,
-            actions: [{
-              content: 'Remove',
-              onAction: () => this.handleRemove(store._id),
-            }],
-            persistActions: true,
-            badges: [{content: 'Running', status: 'success'}],
-          }
-        );
-      });
-      if (array.length > 0) {
-        this.setState({
-          items: array,
-        });
-      }
-    });
-  }
-
-  handleRemove (id) {
-    Meteor.call('shopify.removeShop', id);
-    // TODO: Redirect the user to his Shop to delete the App
+  valueUpdater(field) {
+    return (value) => this.setState({[field]: value});
   }
 
   handleChange(value) {
@@ -103,7 +72,7 @@ class Index extends Component {
             description="To use the aplication, you need to add your Shopify stores."
           >
             <Card
-              title="Store Name"
+              title="Add a store"
               sectioned
             >
               <FormLayout>
@@ -130,72 +99,10 @@ class Index extends Component {
               </FormLayout>
             </Card>
           </Layout.AnnotatedSection>
-          <Layout.AnnotatedSection
-            title="Manage your connected Stores"
-            description="Here you can manage your connected stores."
-          >
-            <Card
-              title="List of Stores"
-            >
-              <ResourceList
-                items={this.state.items}
-                renderItem={(item, index) => {
-                  return <ResourceList.Item key={index} {...item} />;
-                }}
-              />
-            </Card>
-          </Layout.AnnotatedSection>
+          <StoresListContainer/>
         </Layout>
       </div>
     );
-  }
-
-  valueUpdater(field) {
-    return (value) => this.setState({[field]: value});
-  }
-
-  connectAccountMarkup() {
-    return (
-      <Layout.AnnotatedSection
-        title="Account"
-        description="Connect your account to your Shopify store."
-      >
-        <AccountConnection
-          action={{
-            content: 'Connect',
-            onAction: this.toggleConnection.bind(this, this.state),
-          }}
-          details="No account connected"
-          termsOfService={<p>By clicking Connect, you are accepting Sample’s <Link url="https://polaris.shopify.com">Terms and Conditions</Link>, including a commission rate of 15% on sales.</p>}
-        />
-      </Layout.AnnotatedSection>
-    );
-  }
-
-  disconnectAccountMarkup() {
-    return (
-      <Layout.AnnotatedSection
-          title="Account"
-          description="Disconnect your account from your Shopify store."
-        >
-        <AccountConnection
-          connected
-          action={{
-            content: 'Disconnect',
-            onAction: this.toggleConnection.bind(this, this.state),
-          }}
-          accountName="Tom Ford"
-          title={<Link url="http://google.com">Tom Ford</Link>}
-          details="Account id: d587647ae4"
-        />
-      </Layout.AnnotatedSection>
-    );
-  }
-
-  renderAccount() {
-    return this.state.connected
-      ? this.disconnectAccountMarkup()
-      : this.connectAccountMarkup();
   }
 }
 

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Meteor } from 'meteor/meteor';
 import {
+  Page,
   Layout,
   FooterHelp,
   Link,
@@ -49,7 +50,9 @@ export default class Callback extends Component {
 
   render() {
     return (
-      <div>
+      <Page
+        title="Confirmation"
+      >
         <Layout>
           <Layout.AnnotatedSection
             title="Style"
@@ -78,7 +81,7 @@ export default class Callback extends Component {
             <FooterHelp>For more details on Polaris, visit our <Link url="https://polaris.shopify.com">styleguide</Link>.</FooterHelp>
           </Layout.Section>
         </Layout>
-      </div>
+      </Page>
     );
   }
 }

@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import ShopifyToken from 'shopify-token';
+import Shopify from 'shopify-api-node';
 import { Stores } from './stores.js';
 
 const shopifyToken = new ShopifyToken({
@@ -40,6 +41,15 @@ Meteor.methods({
   'shopify.removeShop': function removeShop(id) {
     // TODO: Add method to check if the user is connected and if he's the shop owner
     check(id, String);
-    Stores.remove(id);
+    const store = Stores.findOne(id);
+    const shopify = new Shopify({
+      shopName: store.storeName,
+      accessToken: store.token,
+    });
+    shopify.apiPermission.delete()
+      .then(() => {
+        Stores.remove(id);
+      })
+      .catch(err => console.log(err));
   },
 });

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Meteor } from 'meteor/meteor';
 import {
+  Page,
   Layout,
   Card,
   Button,
@@ -48,7 +49,9 @@ export default class Settings extends Component {
 
   render() {
     return (
-      <div>
+      <Page
+        title="Settings"
+      >
         <Layout>
           <Layout.AnnotatedSection
             title="Connect your Shopify Store"
@@ -84,7 +87,7 @@ export default class Settings extends Component {
           </Layout.AnnotatedSection>
           <StoresListContainer/>
         </Layout>
-      </div>
+      </Page>
     );
   }
 }

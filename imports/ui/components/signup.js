@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Layout,
   Card,
@@ -28,8 +29,13 @@ export default class Signup extends Component {
       <div>
         <Layout.Section>
           <Card
-            title="Sign Up"
+            title="Create an account"
             sectioned
+            primaryFooterAction={{
+              content: 'Already have an account?',
+              plain: true,
+              onAction: () => this.props.switch(),
+            }}
           >
             <FormLayout>
               <FormLayout.Group>
@@ -78,3 +84,7 @@ export default class Signup extends Component {
     );
   }
 }
+
+Signup.propTypes = {
+  switch: PropTypes.func.isRequired,
+};

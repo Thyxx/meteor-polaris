@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Page,
   Layout,
 } from '@shopify/polaris';
 import Divider from '../components/divider';
@@ -14,22 +15,29 @@ export default class Settings extends Component {
     };
   }
 
+  switchLogin() {
+    this.setState({
+      login: !this.state.login,
+    });
+  }
+
   renderLogin() {
-    return this.state.login ? <Login/> : <Signup/>;
+    return (
+      this.state.login
+        ? <Login switch={this.switchLogin.bind(this)}/>
+        : <Signup switch={this.switchLogin.bind(this)}/>
+    );
   }
   render() {
     return (
-      <div>
+      <Page
+        title="Home"
+      >
         <Divider height={20}/>
         <Layout>
           {this.renderLogin()}
-          <div>
-            <Layout.Section>
-              <h1 onClick={() => this.setState({ login: !this.state.login })}>switch</h1>
-            </Layout.Section>
-          </div>
         </Layout>
-      </div>
+      </Page>
     );
   }
 }

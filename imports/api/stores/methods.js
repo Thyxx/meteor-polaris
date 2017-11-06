@@ -42,6 +42,7 @@ Meteor.methods({
     // TODO: Add method to check if the user is connected and if he's the shop owner
     check(id, String);
     const store = Stores.findOne(id);
+    // TODO: Add condition to delete the store if it exists
     const shopify = new Shopify({
       shopName: store.storeName,
       accessToken: store.token,

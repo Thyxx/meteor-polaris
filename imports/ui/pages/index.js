@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Page,
   Layout,
@@ -7,7 +8,7 @@ import Divider from '../components/divider';
 import Signup from '../components/forms/signup';
 import Login from '../components/forms/login';
 
-export default class Settings extends Component {
+export default class Index extends Component {
   constructor() {
     super();
     this.state = {
@@ -21,11 +22,15 @@ export default class Settings extends Component {
     });
   }
 
+  handleRedirect(path) {
+    this.props.history.push(path);
+  }
+
   renderLogin() {
     return (
       this.state.login
-        ? <Login switch={this.switchLogin.bind(this)}/>
-        : <Signup switch={this.switchLogin.bind(this)}/>
+        ? <Login redirect={this.handleRedirect.bind(this)} switch={this.switchLogin.bind(this)}/>
+        : <Signup redirect={this.handleRedirect.bind(this)} switch={this.switchLogin.bind(this)}/>
     );
   }
   render() {
@@ -41,3 +46,7 @@ export default class Settings extends Component {
     );
   }
 }
+
+Index.propTypes = {
+  history: PropTypes.object.isRequired,
+};

@@ -9,6 +9,7 @@ import {
   Icon,
 } from '@shopify/polaris';
 import yup from 'yup';
+import handleLogin from '../../../modules/login';
 
 export default class Login extends Component {
   constructor() {
@@ -126,6 +127,7 @@ export default class Login extends Component {
                 submit
                 primary
                 disabled={!this.formValidator()}
+                onClick={() => handleLogin({ component: this })}
               >
                 Sign in
               </Button>

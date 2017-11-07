@@ -4,8 +4,8 @@ import {
   Layout,
 } from '@shopify/polaris';
 import Divider from '../components/divider';
-import Signup from '../components/signup';
-import Login from '../components/login';
+import Signup from '../components/forms/signup';
+import Login from '../components/forms/login';
 
 export default class Settings extends Component {
   constructor() {

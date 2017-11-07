@@ -16,22 +16,39 @@ export default class Login extends Component {
     this.state = {
       email: {
         value: '',
-        valid: true,
+        valid: false,
+        focus: false,
       },
       password: {
         value: '',
-        valid: true,
+        valid: false,
+        focus: false,
       },
     };
   }
 
-  valueUpdater(field) {
-    return value => this.setState({
+  focusUpdater(field, focus) {
+    this.setState({
       [field]: {
-        value,
-        valid: true,
+        value: this.state[field].value,
+        valid: this.state[field].valid,
+        focus,
       },
     });
+  }
+
+  valueUpdater(field) {
+    return (value) => {
+      this.setState({
+        [field]: {
+          value,
+          valid: this.state[field].valid,
+          focus: this.state[field].focus,
+        },
+      }, () => {
+        this.fieldValidator(field);
+      });
+    };
   }
 
   fieldValidator(field) {
@@ -48,6 +65,7 @@ export default class Login extends Component {
             [field]: {
               valid: true,
               value: this.state[field].value,
+              focus: this.state[field].focus,
             },
           });
         } else {
@@ -55,13 +73,20 @@ export default class Login extends Component {
             [field]: {
               valid: false,
               value: this.state[field].value,
+              focus: this.state[field].focus,
             },
           });
         }
       });
   }
 
+  formValidator() {
+    const { email, password } = this.state;
+    return (email.valid && password.valid);
+  }
+
   render() {
+    const { email, password } = this.state;
     return (
       <div>
         <Layout.Section>
@@ -78,27 +103,29 @@ export default class Login extends Component {
               <div style={{ width: '460px' }}></div>
               <TextField
                 prefix={<Icon color={'inkLightest'} source="circlePlus" />}
-                value={this.state.email.value}
+                value={email.value}
                 label="Email"
                 type="email"
                 onChange={this.valueUpdater('email')}
-                onBlur={() => this.fieldValidator('email')}
-                error={!this.state.email.valid && this.state.email.value.length > 0 ? 'Use a valid email address.' : false}
+                onFocus={() => this.focusUpdater('email', true)}
+                onBlur={() => this.focusUpdater('email', false)}
+                error={!email.focus && !email.valid && email.value.length > 0 ? 'Use a valid email address.' : false}
               />
               <TextField
                 prefix={<Icon color={'inkLightest'} source="search" />}
-                value={this.state.password.value}
+                value={password.value}
                 label="Password"
                 type="password"
                 minLength={6}
                 onChange={this.valueUpdater('password')}
-                onBlur={() => this.fieldValidator('password')}
-                error={!this.state.password.valid && this.state.password.value.length > 0 ? 'Password must contain at least 6 characters.' : false}
+                onFocus={() => this.focusUpdater('password', true)}
+                onBlur={() => this.focusUpdater('password', false)}
+                error={!password.focus && !password.valid && password.value.length > 0 ? 'Password must contain at least 6 characters.' : false}
               />
               <Button
                 submit
                 primary
-                disabled
+                disabled={!this.formValidator()}
               >
                 Sign in
               </Button>

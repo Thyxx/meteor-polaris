@@ -4,7 +4,7 @@ import {
   Stack,
 } from '@shopify/polaris';
 
-export default class Login extends Component {
+export default class PublicAppBar extends Component {
   render() {
     return (
       <div style={{ backgroundColor: '#43467F' }}>
@@ -14,7 +14,7 @@ export default class Login extends Component {
               <Link to='/'><p style={{ color: 'white', fontSize: '16px', fontWeight: '600' }}>Shopify Manager</p></Link>
             </Stack.Item>
             <Stack.Item>
-              <Link to='/settings'><p style={{ color: 'white', fontSize: '16px' }}>Settings</p></Link>
+              <Link to='/login'><p style={{ color: 'white', fontSize: '16px' }}>Login</p></Link>
             </Stack.Item>
           </Stack>
         </div>

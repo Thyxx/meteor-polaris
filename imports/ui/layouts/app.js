@@ -8,6 +8,7 @@ import Settings from '../pages/settings';
 import Index from '../pages/index';
 import Login from '../pages/login';
 import Callback from '../pages/callback';
+import Orders from '../pages/orders';
 import AppBar from '../components/nav/appBar';
 import Authenticated from '../components/authenticated';
 import Public from '../components/public';
@@ -18,6 +19,7 @@ const App = props => (
       <AppBar {...props}/>
       <Switch>
         <Route exact name="index" path="/" component={Index}/>
+        <Authenticated exact path="/orders" component={Orders} {...props}/>
         <Authenticated exact path="/settings" component={Settings} {...props}/>
         <Authenticated exact path="/callback/" component={Callback} {...props}/>
         <Public path="/login" component={Login} {...props} />

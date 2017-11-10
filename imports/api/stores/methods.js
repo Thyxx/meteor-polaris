@@ -14,7 +14,7 @@ Meteor.methods({
   'shopify.getRedirectUrl': function getRedirectUrl(storeName) {
     check(storeName, String);
     if (this.userId) {
-      const url = shopifyToken.generateAuthUrl(storeName, ['read_orders']);
+      const url = shopifyToken.generateAuthUrl(storeName, ['read_orders', 'write_reports', 'read_reports', 'read_analytics']);
       return url;
     }
     throw new Meteor.Error('User not allowed.');
@@ -25,8 +25,8 @@ Meteor.methods({
     if (this.userId) {
       return shopifyToken.getAccessToken(shop, code)
         .then((token) => {
-          const storeExists = Stores.find({ storeUrl: shop }).fetch();
-          if (storeExists.length === 0) {
+          const storeExists = Stores.findOne({ storeUrl: shop });
+          if (!storeExists) {
             Stores.insert({
               storeUrl: shop,
               token,
@@ -35,10 +35,12 @@ Meteor.methods({
               owner: this.userId,
             });
           } else {
-            throw new Meteor.Error('This store already exists.');
+            Stores.update(storeExists._id, {
+              $set: {
+                token,
+              },
+            });
           }
-        }, (err) => {
-          throw new Meteor.Error(err);
         });
     }
     throw new Meteor.Error('User not allowed.');
@@ -57,5 +59,18 @@ Meteor.methods({
         })
         .catch(err => console.log(err));
     }
+  },
+  'shopify.isTokenActive': function isTokenActive(id) {
+    const store = Stores.findOne(id);
+    if (store && this.userId && store.owner === this.userId) {
+      const shopify = new Shopify({
+        shopName: store.storeName,
+        accessToken: store.token,
+      });
+      return shopify.shop.get()
+        .then(() => true)
+        .catch(err => false);
+    }
+    throw new Meteor.Error('Not allowed.');
   },
 });

@@ -8,6 +8,62 @@ import {
   Spinner,
 } from '@shopify/polaris';
 
+class ListItem extends Component {
+  constructor() {
+    super();
+    this.state = {
+      status: 'success',
+      badgeMessage: 'Running',
+      redirectUrl: '',
+    };
+  }
+
+  handleRemove(id) {
+    Meteor.call('shopify.removeShop', id);
+  }
+
+  componentWillMount() {
+    Meteor.call('shopify.getRedirectUrl', this.props.storeName, (err, res) => {
+      this.setState({ redirectUrl: res });
+    });
+  }
+
+  componentDidMount() {
+    Meteor.call('shopify.isTokenActive', this.props._id, (err, res) => {
+      if (!res) {
+        this.setState({
+          status: 'warning',
+          badgeMessage: 'Not connected',
+        });
+      }
+    });
+  }
+
+  render() {
+    return (
+      <ResourceList.Item
+        attributeOne={this.props.storeUrl}
+        actions={[{
+          content: 'Update',
+          onAction: () => window.open(this.state.redirectUrl, '_self'),
+        },
+        {
+          content: 'Remove',
+          onAction: () => this.handleRemove(this.props._id),
+        }]}
+        persistActions={true}
+        badges={[{ content: this.state.badgeMessage, status: this.state.status }]}
+      />
+    );
+  }
+}
+
+ListItem.propTypes = {
+  storeUrl: PropTypes.string.isRequired,
+  _id: PropTypes.string.isRequired,
+  storeName: PropTypes.string.isRequired,
+};
+
 export default class StoresList extends Component {
   constructor() {
     super();
@@ -20,27 +76,6 @@ export default class StoresList extends Component {
     };
   }
 
-  storesList(stores) {
-    const storesList = [];
-    stores.map(store => (
-      storesList.push({
-        attributeOne: store.storeUrl,
-        actions: [{
-          content: 'Remove',
-          onAction: () => this.handleRemove(store._id),
-        }],
-        persistActions: true,
-        badges: [{ content: 'Running', status: 'success' }],
-      })
-    ));
-    return storesList;
-  }
-
-  handleRemove(id) {
-    Meteor.call('shopify.removeShop', id);
-    // TODO: Redirect the user to his Shop to delete the App
-  }
-
   renderStoresList() {
     return (
       this.props.loading
@@ -48,18 +83,17 @@ export default class StoresList extends Component {
         : <ResourceList
             items={
               this.props.stores.length > 0
-              ? this.storesList(this.props.stores)
+              ? this.props.stores
               : this.state.defaultItem
             }
             renderItem={(item, index) =>
-              <ResourceList.Item key={index} {...item} />
+              <ListItem key={index} {...item} />
             }
         />
     );
   }
 
   render() {
-    // TODO: Add method to check if the token is valid
     return (
       <Layout.AnnotatedSection
         title="Manage your connected Stores"

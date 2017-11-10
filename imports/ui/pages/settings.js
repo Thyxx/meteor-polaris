@@ -69,7 +69,7 @@ export default class Settings extends Component {
                     prefix="https://"
                     suffix=".myshopify.com"
                     onChange={this.handleChange.bind(this)}
-                    error={this.state.alreadyExists ? 'You are already using this store.' : false}
+                    error={this.state.alreadyExists ? 'This store already exists, please contact the store owner.' : false}
                     connectedRight={
                       <Button
                         primary

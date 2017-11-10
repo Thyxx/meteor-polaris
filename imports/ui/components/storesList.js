@@ -65,29 +65,20 @@ ListItem.propTypes = {
 };
 
 export default class StoresList extends Component {
-  constructor() {
-    super();
-    this.state = {
-      defaultItem: [
-        {
-          attributeOne: 'You do not have a store connected yet.',
-        },
-      ],
-    };
-  }
-
   renderStoresList() {
+    const { stores } = this.props;
     return (
-      this.props.loading
-        ? <Spinner size="small" />
-        : <ResourceList
-            items={
-              this.props.stores.length > 0
-              ? this.props.stores
-              : this.state.defaultItem
-            }
+      stores.length > 0
+        ? <ResourceList
+            items={stores}
             renderItem={(item, index) =>
               <ListItem key={index} {...item} />
+            }
+        />
+        : <ResourceList
+            items={[{ attributeOne: 'You do not have a store connected yet.' }]}
+            renderItem={(item, index) =>
+              <ResourceList.Item key={index} {...item} />
             }
         />
     );

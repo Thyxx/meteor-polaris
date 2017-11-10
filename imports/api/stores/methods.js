@@ -57,7 +57,7 @@ Meteor.methods({
         .then(() => {
           Stores.remove(id);
         })
-        .catch(err => console.log(err));
+        .catch(err => Stores.remove(id));
     }
   },
   'shopify.isTokenActive': function isTokenActive(id) {

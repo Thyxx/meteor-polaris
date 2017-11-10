@@ -12,45 +12,65 @@ const shopifyToken = new ShopifyToken({
 
 Meteor.methods({
   'shopify.getRedirectUrl': function getRedirectUrl(storeName) {
-    // TODO: Add method to check if the user is connected
     check(storeName, String);
-    const url = shopifyToken.generateAuthUrl(storeName, ['read_orders']);
-    return url;
+    if (this.userId) {
+      const url = shopifyToken.generateAuthUrl(storeName, ['read_orders', 'write_reports', 'read_reports', 'read_analytics']);
+      return url;
+    }
+    throw new Meteor.Error('User not allowed.');
   },
   'shopify.createShop': function createShop(code, shop) {
-    // TODO: Add method to check if the user is connected
     check(shop, String);
     check(code, String);
-    return shopifyToken.getAccessToken(shop, code)
-      .then((token) => {
-        const storeExists = Stores.find({ storeUrl: shop }).fetch();
-        if (storeExists.length === 0) {
-          Stores.insert({
-            storeUrl: shop,
-            token,
-            createdAt: new Date(),
-            storeName: shop.replace('.myshopify.com', ''),
-          });
-        } else {
-          throw new Meteor.Error('This store already exists.');
-        }
-      }, (err) => {
-        throw new Meteor.Error(err);
-      });
+    if (this.userId) {
+      return shopifyToken.getAccessToken(shop, code)
+        .then((token) => {
+          const storeExists = Stores.findOne({ storeUrl: shop });
+          if (!storeExists) {
+            Stores.insert({
+              storeUrl: shop,
+              token,
+              createdAt: new Date(),
+              storeName: shop.replace('.myshopify.com', ''),
+              owner: this.userId,
+            });
+          } else {
+            Stores.update(storeExists._id, {
+              $set: {
+                token,
+              },
+            });
+          }
+        });
+    }
+    throw new Meteor.Error('User not allowed.');
   },
   'shopify.removeShop': function removeShop(id) {
-    // TODO: Add method to check if the user is connected and if he's the shop owner
     check(id, String);
     const store = Stores.findOne(id);
-    // TODO: Add condition to delete the store if it exists
-    const shopify = new Shopify({
-      shopName: store.storeName,
-      accessToken: store.token,
-    });
-    shopify.apiPermission.delete()
-      .then(() => {
-        Stores.remove(id);
-      })
-      .catch(err => console.log(err));
+    if (store && this.userId && store.owner === this.userId) {
+      const shopify = new Shopify({
+        shopName: store.storeName,
+        accessToken: store.token,
+      });
+      shopify.apiPermission.delete()
+        .then(() => {
+          Stores.remove(id);
+        })
+        .catch(err => Stores.remove(id));
+    }
+  },
+  'shopify.isTokenActive': function isTokenActive(id) {
+    const store = Stores.findOne(id);
+    if (store && this.userId && store.owner === this.userId) {
+      const shopify = new Shopify({
+        shopName: store.storeName,
+        accessToken: store.token,
+      });
+      return shopify.shop.get()
+        .then(() => true)
+        .catch(err => false);
+    }
+    throw new Meteor.Error('Not allowed.');
   },
 });

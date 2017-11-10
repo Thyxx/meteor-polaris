@@ -4,30 +4,8 @@ import {
   Layout,
 } from '@shopify/polaris';
 import Divider from '../components/divider';
-import Signup from '../components/signup';
-import Login from '../components/login';
 
-export default class Settings extends Component {
-  constructor() {
-    super();
-    this.state = {
-      login: true,
-    };
-  }
-
-  switchLogin() {
-    this.setState({
-      login: !this.state.login,
-    });
-  }
-
-  renderLogin() {
-    return (
-      this.state.login
-        ? <Login switch={this.switchLogin.bind(this)}/>
-        : <Signup switch={this.switchLogin.bind(this)}/>
-    );
-  }
+export default class Index extends Component {
   render() {
     return (
       <Page
@@ -35,7 +13,7 @@ export default class Settings extends Component {
       >
         <Divider height={20}/>
         <Layout>
-          {this.renderLogin()}
+          <h1>Hello World!</h1>
         </Layout>
       </Page>
     );

@@ -49,13 +49,15 @@
   "dependencies": {
     "@shopify/polaris": "^1.8.3",
     "babel-runtime": "^6.26.0",
+    "bcrypt": "^1.0.3",
     "meteor-node-stubs": "^0.3.2",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-router-dom": "^4.2.2",
     "shopify-api-node": "^2.9.0",
-    "shopify-token": "^3.0.1"
+    "shopify-token": "^3.0.1",
+    "yup": "^0.23.0"
   },
   "devDependencies": {
     "eslint": "^4.10.0",

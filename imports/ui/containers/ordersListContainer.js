@@ -14,11 +14,16 @@ const changePage = (increment) => {
 };
 
 const OrdersListContainer = withTracker(() => {
-  const orders = Session.get('orders');
+  let orders = Session.get('orders');
   Meteor.call('shopify.getOrders', page.get(), (err, res) => {
     Session.set('orders', res);
   });
   const loading = !orders;
+  if (!loading) {
+    const sortOrders = orders.sort((a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    orders = sortOrders;
+  }
   const ordersExists = !loading && !!orders;
   return {
     orders,

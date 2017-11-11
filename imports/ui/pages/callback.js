@@ -43,7 +43,7 @@ export default class Callback extends Component {
           error: true,
         });
       } else {
-        this.props.history.push('/settings');
+        this.props.history.push('/orders');
       }
     });
   }

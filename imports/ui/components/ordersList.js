@@ -7,6 +7,11 @@ import {
   TextStyle,
   Pagination,
   Card,
+  Popover,
+  Select,
+  Button,
+  TextField,
+  Icon,
 } from '@shopify/polaris';
 import moment from 'moment';
 
@@ -52,6 +57,13 @@ ListItem.propTypes = {
 };
 
 export default class OrdersList extends Component {
+  constructor() {
+    super();
+    this.state = {
+      active: false,
+    };
+  }
+
   handleNext() {
     this.props.changePage(true);
   }
@@ -61,21 +73,56 @@ export default class OrdersList extends Component {
   }
 
   render() {
+    const { loading, orders, page } = this.props;
     return (
-      !this.props.loading
+      !loading
         ? <div>
           <Card>
+            <Card.Section>
+              <TextField
+                prefix={<Icon color={'inkLightest'} source="search" />}
+                placeholder="Search orders"
+                connectedLeft={
+                  <Popover
+                    sectioned
+                    active={this.state.active}
+                    activator={
+                      <Button
+                        disclosure
+                        onClick={() => this.setState({ active: !this.state.active })}
+                      >
+                        Filter Orders
+                      </Button>
+                    }
+                    onClose={() => this.setState({ active: false })}
+                  >
+                    <Select
+                      label="Show all orders where:"
+                      options={[
+                        'two',
+                        'three',
+                        {
+                          label: 'four',
+                          value: '4',
+                        },
+                      ]}
+                      placeholder="Select"
+                    />
+                  </Popover>
+                }
+              />
+            </Card.Section>
             <ResourceList
-              items={this.props.orders}
+              items={orders}
               renderItem={(item, index) =>
                 <ListItem key={index} {...item} />
               }
             />
             <div style={{ textAlign: 'center', padding: '20px' }}>
               <Pagination
-                hasPrevious={!(this.props.page < 2)}
+                hasPrevious={!(page < 2)}
                 onPrevious={() => this.handlePrevious()}
-                hasNext={this.props.page > 0}
+                hasNext={orders.length > 49}
                 onNext={() => this.handleNext()}
               />
             </div>
@@ -89,4 +136,6 @@ export default class OrdersList extends Component {
 OrdersList.propTypes = {
   loading: PropTypes.bool.isRequired,
   orders: PropTypes.array,
+  changePage: PropTypes.func,
+  page: PropTypes.number,
 };

@@ -13,7 +13,7 @@ export default class Orders extends Component {
       >
         <Layout>
           <Layout.Section>
-            <OrdersListContainer/>
+            <OrdersListContainer stores={this.props.stores}/>
           </Layout.Section>
         </Layout>
       </Page>

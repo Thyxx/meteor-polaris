@@ -18,7 +18,7 @@ const handleSearch = (value) => {
   searchValue.set(value);
 };
 
-const OrdersListContainer = withTracker(() => {
+const OrdersListContainer = withTracker((props) => {
   let orders = Session.get('orders');
   Meteor.call('shopify.getOrders', page.get(), searchValue.get(), (err, res) => {
     Session.set('orders', res);
@@ -37,6 +37,7 @@ const OrdersListContainer = withTracker(() => {
     changePage,
     handleSearch,
     page: page.get(),
+    stores: props.stores,
   };
 })(OrdersList);
 

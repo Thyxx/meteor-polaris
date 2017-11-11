@@ -8,7 +8,7 @@ import Settings from '../pages/settings';
 import Index from '../pages/index';
 import Login from '../pages/login';
 import Callback from '../pages/callback';
-import Orders from '../pages/orders';
+import Orders from '../containers/ordersContainer';
 import AppBar from '../components/nav/appBar';
 import Authenticated from '../components/authenticated';
 import Public from '../components/public';

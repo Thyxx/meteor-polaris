@@ -16,17 +16,37 @@ import {
 import moment from 'moment';
 
 class ListItem extends Component {
+  constructor() {
+    super();
+    this.renderOrderUrl = this.renderOrderUrl.bind(this);
+  }
+
   jsUcfirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
+  renderOrderUrl(storeUrl, orderId) {
+    const url = new URL(storeUrl);
+    const { protocol, pathname } = url;
+    const storeId = pathname.split('/')[1];
+    const { stores } = this.props;
+    const index = stores.findIndex(i => i.id === Number(storeId));
+    const store = stores[index];
+    return `${protocol}//${store.url}/admin/orders/${orderId}`;
+  }
+
   render() {
     const {
-      id, customer, financial_status, fulfillment_status, created_at, name,
+      id, customer, financial_status, fulfillment_status, created_at, name, order_status_url,
     } = this.props;
     return (
       <ResourceList.Item
-        url={`https://store-iskn-eur.myshopify.com/admin/orders/${id}`}
+        actions={[{
+          content: 'View order details',
+          onAction: () => window.open(this.renderOrderUrl(order_status_url, id)),
+        }]}
+        persistActions
+        external
         attributeOne={name}
         attributeTwo={`${customer.first_name} ${customer.last_name}`}
         attributeThree={
@@ -35,6 +55,7 @@ class ListItem extends Component {
         badges={[
           {
             content: this.jsUcfirst(financial_status),
+            status: financial_status === 'authorized' ? 'attention' : 'default',
           },
           {
             content: !fulfillment_status ? 'Unfulfilled' : this.jsUcfirst(fulfillment_status),
@@ -54,6 +75,8 @@ ListItem.propTypes = {
   fulfillment_status: PropTypes.string,
   financial_status: PropTypes.string,
   customer: PropTypes.object,
+  order_status_url: PropTypes.string,
+  stores: PropTypes.array,
 };
 
 export default class OrdersList extends Component {
@@ -81,7 +104,9 @@ export default class OrdersList extends Component {
   }
 
   render() {
-    const { loading, orders, page } = this.props;
+    const {
+      loading, orders, page, stores,
+    } = this.props;
     return (
       !loading
         ? <div>
@@ -125,7 +150,7 @@ export default class OrdersList extends Component {
             <ResourceList
               items={orders}
               renderItem={(item, index) =>
-                <ListItem key={index} {...item} />
+                <ListItem key={index} stores={stores} {...item} />
               }
             />
             <div style={{ textAlign: 'center', padding: '20px' }}>
@@ -146,6 +171,7 @@ export default class OrdersList extends Component {
 OrdersList.propTypes = {
   loading: PropTypes.bool.isRequired,
   orders: PropTypes.array,
+  stores: PropTypes.array,
   changePage: PropTypes.func,
   handleSearch: PropTypes.func,
   page: PropTypes.number,

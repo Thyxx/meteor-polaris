@@ -13,9 +13,14 @@ const changePage = (increment) => {
   }
 };
 
+const searchValue = new ReactiveVar('');
+const handleSearch = (value) => {
+  searchValue.set(value);
+};
+
 const OrdersListContainer = withTracker(() => {
   let orders = Session.get('orders');
-  Meteor.call('shopify.getOrders', page.get(), (err, res) => {
+  Meteor.call('shopify.getOrders', page.get(), searchValue.get(), (err, res) => {
     Session.set('orders', res);
   });
   const loading = !orders;
@@ -30,6 +35,7 @@ const OrdersListContainer = withTracker(() => {
     loading,
     ordersExists,
     changePage,
+    handleSearch,
     page: page.get(),
   };
 })(OrdersList);

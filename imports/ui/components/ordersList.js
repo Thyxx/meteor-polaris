@@ -61,6 +61,7 @@ export default class OrdersList extends Component {
     super();
     this.state = {
       active: false,
+      value: '',
     };
   }
 
@@ -72,6 +73,13 @@ export default class OrdersList extends Component {
     this.props.changePage(false);
   }
 
+  valueUpdater() {
+    return (value) => {
+      this.props.handleSearch(value);
+      this.setState({ value });
+    };
+  }
+
   render() {
     const { loading, orders, page } = this.props;
     return (
@@ -80,8 +88,10 @@ export default class OrdersList extends Component {
           <Card>
             <Card.Section>
               <TextField
+                value={this.state.value}
                 prefix={<Icon color={'inkLightest'} source="search" />}
                 placeholder="Search orders"
+                onChange={this.valueUpdater()}
                 connectedLeft={
                   <Popover
                     sectioned
@@ -137,5 +147,6 @@ OrdersList.propTypes = {
   loading: PropTypes.bool.isRequired,
   orders: PropTypes.array,
   changePage: PropTypes.func,
+  handleSearch: PropTypes.func,
   page: PropTypes.number,
 };

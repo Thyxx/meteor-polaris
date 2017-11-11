@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Page,
   Layout,
-  Icon,
 } from '@shopify/polaris';
 import OrdersListContainer from '../containers/ordersListContainer';
 
@@ -22,3 +22,7 @@ export default class Orders extends Component {
     );
   }
 }
+
+Orders.propTypes = {
+  stores: PropTypes.array,
+};

@@ -22,6 +22,7 @@ const OrdersListContainer = withTracker((props) => {
   let orders = Session.get('orders');
   Meteor.call('shopify.getOrders', page.get(), searchValue.get(), (err, res) => {
     Session.set('orders', res);
+    props.loading();
   });
   const loading = !orders;
   if (!loading) {

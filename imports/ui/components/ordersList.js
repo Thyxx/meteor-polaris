@@ -26,6 +26,9 @@ class ListItem extends Component {
   }
 
   renderOrderUrl(storeUrl, orderId) {
+    if (!storeUrl) {
+      return '#';
+    }
     const url = new URL(storeUrl);
     const { protocol, pathname } = url;
     const storeId = pathname.split('/')[1];
@@ -48,14 +51,14 @@ class ListItem extends Component {
         persistActions
         external
         attributeOne={name}
-        attributeTwo={`${customer.first_name} ${customer.last_name}`}
+        attributeTwo={customer ? `${customer.first_name} ${customer.last_name}` : ''}
         attributeThree={
           <TextStyle variation="subdued">{moment(created_at).calendar()}</TextStyle>
         }
         badges={[
           {
             content: this.jsUcfirst(financial_status),
-            status: financial_status === 'authorized' ? 'attention' : 'default',
+            status: financial_status === 'authorized' || financial_status === 'pending' ? 'attention' : 'default',
           },
           {
             content: !fulfillment_status ? 'Unfulfilled' : this.jsUcfirst(fulfillment_status),

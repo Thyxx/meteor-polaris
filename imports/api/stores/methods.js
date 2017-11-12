@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
 import ShopifyToken from 'shopify-token';
@@ -72,5 +73,57 @@ Meteor.methods({
         .catch(err => false);
     }
     throw new Meteor.Error('Not allowed.');
+  },
+  'shopify.getOrders': async function (page, searchValue) {
+    check(page, Number);
+    check(searchValue, String);
+    if (this.userId) {
+      const stores = Stores.find({ owner: this.userId }).fetch();
+      let orders = [];
+      await Promise.all(stores.map(async (store) => {
+        const shopify = new Shopify({
+          shopName: store.storeName,
+          accessToken: store.token,
+        });
+        const array = await shopify.order.list({
+          page,
+          status: 'any',
+          financial_status: 'any',
+          name: searchValue,
+          fields: [
+            'created_at',
+            'id',
+            'name',
+            'financial_status',
+            'customer',
+            'fulfillment_status',
+            'order_status_url',
+          ],
+        });
+        orders = orders.concat(array);
+      }));
+      return orders;
+    }
+    throw new Meteor.Error('User not allowed.');
+  },
+  'shopify.getStoresId': async function () {
+    if (this.userId) {
+      const stores = Stores.find({ owner: this.userId }).fetch();
+      const result = [];
+      await Promise.all(stores.map(async (store) => {
+        const shopify = new Shopify({
+          shopName: store.storeName,
+          accessToken: store.token,
+        });
+        const shop = await shopify.shop.get();
+        const object = {
+          id: shop.id,
+          url: shop.myshopify_domain,
+        };
+        result.push(object);
+      }));
+      return result;
+    }
+    throw new Meteor.Error('User not allowed.');
   },
 });

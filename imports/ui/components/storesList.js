@@ -5,7 +5,6 @@ import {
   Layout,
   Card,
   ResourceList,
-  Spinner,
 } from '@shopify/polaris';
 
 class ListItem extends Component {

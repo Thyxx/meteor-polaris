@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 import { withTracker } from 'meteor/react-meteor-data';
 import { ReactiveVar } from 'meteor/reactive-var';
+import _ from 'underscore';
 import OrdersList from '../components/ordersList';
 
 const page = new ReactiveVar(1);
@@ -18,9 +19,19 @@ const handleSearch = (value) => {
   searchValue.set(value);
 };
 
+Session.set('filters', {
+  status: 'any',
+  financial_status: 'any',
+});
+const filters = Session.get('filters');
+const updateFilters = (filter) => {
+  Session.set('filters', _.extend(filters, { [filter.filter]: filter.value }));
+};
+
 const OrdersListContainer = withTracker((props) => {
+  console.log(Session.get('filters'));
   let orders = Session.get('orders');
-  Meteor.call('shopify.getOrders', page.get(), searchValue.get(), (err, res) => {
+  Meteor.call('shopify.getOrders', page.get(), searchValue.get(), Session.get('filters'), (err, res) => {
     Session.set('orders', res);
     props.loading();
   });
@@ -37,6 +48,7 @@ const OrdersListContainer = withTracker((props) => {
     ordersExists,
     changePage,
     handleSearch,
+    updateFilters,
     page: page.get(),
     stores: props.stores,
   };

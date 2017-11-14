@@ -4,91 +4,27 @@ import PropTypes from 'prop-types';
 import {
   ResourceList,
   Spinner,
-  TextStyle,
   Pagination,
   Card,
-  Popover,
-  Select,
-  Button,
   TextField,
   Icon,
+  Tag,
+  Stack,
 } from '@shopify/polaris';
-import moment from 'moment';
-
-class ListItem extends Component {
-  constructor() {
-    super();
-    this.renderOrderUrl = this.renderOrderUrl.bind(this);
-  }
-
-  jsUcfirst(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  renderOrderUrl(storeUrl, orderId) {
-    if (!storeUrl) {
-      return '#';
-    }
-    const url = new URL(storeUrl);
-    const { protocol, pathname } = url;
-    const storeId = pathname.split('/')[1];
-    const { stores } = this.props;
-    const index = stores.findIndex(i => i.id === Number(storeId));
-    const store = stores[index];
-    return `${protocol}//${store.url}/admin/orders/${orderId}`;
-  }
-
-  render() {
-    const {
-      id, customer, financial_status, fulfillment_status, created_at, name, order_status_url,
-    } = this.props;
-    return (
-      <ResourceList.Item
-        actions={[{
-          content: 'View order details',
-          onAction: () => window.open(this.renderOrderUrl(order_status_url, id)),
-        }]}
-        persistActions
-        external
-        attributeOne={name}
-        attributeTwo={customer ? `${customer.first_name} ${customer.last_name}` : ''}
-        attributeThree={
-          <TextStyle variation="subdued">{moment(created_at).calendar()}</TextStyle>
-        }
-        badges={[
-          {
-            content: this.jsUcfirst(financial_status),
-            status: financial_status === 'authorized' || financial_status === 'pending' ? 'attention' : 'default',
-          },
-          {
-            content: !fulfillment_status ? 'Unfulfilled' : this.jsUcfirst(fulfillment_status),
-            status: !fulfillment_status ? 'attention' : 'default',
-            progress: 'incomplete',
-          },
-        ]}
-      />
-    );
-  }
-}
-
-ListItem.propTypes = {
-  id: PropTypes.number,
-  name: PropTypes.string,
-  created_at: PropTypes.string,
-  fulfillment_status: PropTypes.string,
-  financial_status: PropTypes.string,
-  customer: PropTypes.object,
-  order_status_url: PropTypes.string,
-  stores: PropTypes.array,
-};
+import _ from 'underscore';
+import update from 'immutability-helper';
+import Divider from './divider';
+import ListItem from './ordersListItem';
+import OrdersFilter from './ordersFilter';
 
 export default class OrdersList extends Component {
   constructor() {
     super();
     this.state = {
-      active: false,
       value: '',
+      filters: [],
     };
+    this.addFilter = this.addFilter.bind(this);
   }
 
   handleNext() {
@@ -106,6 +42,31 @@ export default class OrdersList extends Component {
     };
   }
 
+  addFilter(filter) {
+    if (_.findIndex(this.state.filters, { filter: filter.filter }) < 0) {
+      this.setState(prevState => ({
+        filters: prevState.filters.push(filter) && prevState.filters,
+      }));
+    } else {
+      const index = this.state.filters.findIndex(e => e.filter === filter.filter);
+      const updatedFilters = update(this.state.filters, { $splice: [[index, 1, filter]] });
+      this.setState({ filters: updatedFilters });
+    }
+    this.props.updateFilters(filter);
+  }
+
+  renderTags() {
+    return this.state.filters.map((filter, index) =>
+      <Tag key={index} onRemove={() => {
+        this.setState({
+          filters: update(this.state.filters, { $splice: [[index, 1]] }),
+        });
+        this.props.updateFilters({ filter: filter.filter, value: 'any' });
+      }}>
+        {filter.details}
+      </Tag>);
+  }
+
   render() {
     const {
       loading, orders, page, stores,
@@ -120,35 +81,12 @@ export default class OrdersList extends Component {
                 prefix={<Icon color={'inkLightest'} source="search" />}
                 placeholder="Search orders"
                 onChange={this.valueUpdater()}
-                connectedLeft={
-                  <Popover
-                    sectioned
-                    active={this.state.active}
-                    activator={
-                      <Button
-                        disclosure
-                        onClick={() => this.setState({ active: !this.state.active })}
-                      >
-                        Filter Orders
-                      </Button>
-                    }
-                    onClose={() => this.setState({ active: false })}
-                  >
-                    <Select
-                      label="Show all orders where:"
-                      options={[
-                        'two',
-                        'three',
-                        {
-                          label: 'four',
-                          value: '4',
-                        },
-                      ]}
-                      placeholder="Select"
-                    />
-                  </Popover>
-                }
+                connectedLeft={<OrdersFilter addFilter={this.addFilter}/>}
               />
+              <Divider height={8}/>
+              <Stack spacing="extraTight">
+                {this.renderTags()}
+              </Stack>
             </Card.Section>
             <ResourceList
               items={orders}
@@ -177,5 +115,6 @@ OrdersList.propTypes = {
   stores: PropTypes.array,
   changePage: PropTypes.func,
   handleSearch: PropTypes.func,
+  updateFilters: PropTypes.func,
   page: PropTypes.number,
 };

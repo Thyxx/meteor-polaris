@@ -29,23 +29,18 @@ const updateFilters = (filter) => {
 };
 
 const OrdersListContainer = withTracker((props) => {
-  console.log(Session.get('filters'));
-  let orders = Session.get('orders');
+  // let orders = Session.get('orders');
   Meteor.call('shopify.getOrders', page.get(), searchValue.get(), Session.get('filters'), (err, res) => {
     Session.set('orders', res);
-    props.loading();
   });
-  const loading = !orders;
-  if (!loading) {
-    const sortOrders = orders.sort((a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    orders = sortOrders;
-  }
-  const ordersExists = !loading && !!orders;
+  // if (!loading) {
+  //   const sortOrders = orders.sort((a, b) =>
+  //     new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  //   orders = sortOrders;
+  // }
   return {
-    orders,
-    loading,
-    ordersExists,
+    orders: Session.get('orders'),
+    loading: !Session.get('orders'),
     changePage,
     handleSearch,
     updateFilters,

@@ -11,32 +11,25 @@ export default class Orders extends Component {
     super();
     this.state = {
       reRender: false,
-      loading: false,
     };
-    this.endLoading = this.endLoading.bind(this);
-  }
-
-  endLoading() {
-    this.setState({
-      loading: false,
-    });
   }
 
   render() {
+    console.log('render page');
     return (
       <Page
         title="Orders"
         primaryAction={{
           content: 'Refresh',
           icon: 'refresh',
-          loading: this.state.loading,
-          onAction: () => this.setState({ reRender: !this.state.reRender, loading: true }),
+          onAction: () => {
+            this.setState({ reRender: !this.state.reRender });
+          },
         }}
       >
         <Layout>
           <Layout.Section>
             <OrdersListContainer
-              loading={this.endLoading}
               re-render={this.state.reRender}
               stores={this.props.stores}
             />

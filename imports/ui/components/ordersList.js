@@ -67,29 +67,35 @@ export default class OrdersList extends Component {
       </Tag>);
   }
 
+  sortOrders() {
+    return this.props.orders.sort((a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  }
+
   render() {
+    console.log('render component');
     const {
       loading, orders, page, stores,
     } = this.props;
     return (
-      !loading
-        ? <div>
-          <Card>
-            <Card.Section>
-              <TextField
-                value={this.state.value}
-                prefix={<Icon color={'inkLightest'} source="search" />}
-                placeholder="Search orders"
-                onChange={this.valueUpdater()}
-                connectedLeft={<OrdersFilter addFilter={this.addFilter}/>}
-              />
-              <Divider height={8}/>
-              <Stack spacing="extraTight">
-                {this.renderTags()}
-              </Stack>
-            </Card.Section>
+      <Card>
+        <Card.Section>
+          <TextField
+            value={this.state.value}
+            prefix={<Icon color={'inkLightest'} source="search" />}
+            placeholder="Search orders"
+            onChange={this.valueUpdater()}
+            connectedLeft={<OrdersFilter addFilter={this.addFilter}/>}
+          />
+          <Divider height={8}/>
+          <Stack spacing="extraTight">
+            {this.renderTags()}
+          </Stack>
+        </Card.Section>
+        {!loading
+          ? <div>
             <ResourceList
-              items={orders}
+              items={this.sortOrders()}
               renderItem={(item, index) =>
                 <ListItem key={index} stores={stores} {...item} />
               }
@@ -102,9 +108,10 @@ export default class OrdersList extends Component {
                 onNext={() => this.handleNext()}
               />
             </div>
-          </Card>
-        </div>
-        : <div style={{ textAlign: 'center', padding: '20px' }}><Spinner/></div>
+          </div>
+          : <div style={{ textAlign: 'center', padding: '20px' }}><Spinner/></div>
+        }
+      </Card>
     );
   }
 }

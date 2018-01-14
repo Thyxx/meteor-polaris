@@ -73,7 +73,6 @@ export default class OrdersList extends Component {
   }
 
   render() {
-    console.log('render component');
     const {
       loading, orders, page, stores,
     } = this.props;

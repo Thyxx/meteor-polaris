@@ -15,7 +15,6 @@ export default class Orders extends Component {
   }
 
   render() {
-    console.log('render page');
     return (
       <Page
         title="Orders"

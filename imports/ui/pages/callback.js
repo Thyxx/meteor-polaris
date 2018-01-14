@@ -54,7 +54,7 @@ export default class Callback extends Component {
         title="Confirmation"
       >
         <Layout>
-          <Layout.AnnotatedSection
+          <Layout.Section
             title="Style"
             description="Customize the style of your checkout"
           >
@@ -74,11 +74,8 @@ export default class Callback extends Component {
                 loading: this.state.loading,
               }}
             >
-              Url code param: {this.state.code}
+              Please confirmation the app installation to import your orders.
             </SettingToggle>
-          </Layout.AnnotatedSection>
-          <Layout.Section>
-            <FooterHelp>For more details on Polaris, visit our <Link url="https://polaris.shopify.com">styleguide</Link>.</FooterHelp>
           </Layout.Section>
         </Layout>
       </Page>

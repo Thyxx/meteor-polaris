@@ -72,7 +72,7 @@ export default class OrdersFilter extends Component {
           onChange={value => this.setState({ selectFilter: value })}
         />
         {
-          this.state.selectFilter === 'status' || this.state.selectFilter === 'financial_status'
+          this.state.selectFilter === 'status'
           ? <div>
             <Divider height={8}/>
             <Select
@@ -94,7 +94,30 @@ export default class OrdersFilter extends Component {
               Add filter
             </Button>
           </div>
-          : <div></div>
+          : <div>
+            <Divider height={8}/>
+            <Select
+              value={this.state.selectValue}
+              options={[
+                'Select a value...',
+                'pending',
+                'authorized',
+                'paid',
+                'partially_paid',
+                'refunded',
+                'partially_refunded',
+                'voided',
+              ]}
+              onChange={value => this.setState({ selectValue: value })}
+            />
+            <Divider height={8}/>
+            <Button
+              size="slim"
+              onClick={() => this.handleAddFilter(this.state.selectFilter, this.state.selectValue)}
+            >
+              Add filter
+            </Button>
+          </div>
         }
       </Popover>
     );

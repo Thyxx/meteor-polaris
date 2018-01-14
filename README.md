@@ -30,7 +30,7 @@ cd my-app
 meteor npm install
 ```
 
-3) Create a file named settings-development.json and add your Shopify App credentials. The redirectUri field should be ```http://localhost:3000/callback/```. This file will be used during the launch of the Meteor server. More info about Meteor settings [here](https://themeteorchef.com/base/settings).
+3) Create a file named ```settings-development.json``` and add your Shopify App credentials. The redirectUri field should be ```http://localhost:3000/callback/```. This file will be used during the launch of the Meteor server. More info about Meteor settings [here](https://themeteorchef.com/base/settings).
 
 ```
 {

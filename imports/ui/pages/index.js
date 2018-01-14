@@ -8,6 +8,14 @@ import {
 
 export default class Index extends Component {
   render() {
+    const login = {
+      pathname: '/login',
+      state: { login: true },
+    };
+    const signup = {
+      pathname: '/login',
+      state: { login: false },
+    };
     return (
       !this.props.authenticated
         ? <Page
@@ -18,11 +26,11 @@ export default class Index extends Component {
           heading="Manage all your stores"
           action={{
             content: 'Create an account',
-            onAction: () => this.props.history.push('/login'),
+            onAction: () => this.props.history.push(signup),
           }}
           secondaryAction={{
             content: 'Log in',
-            onAction: () => this.props.history.push('/login'),
+            onAction: () => this.props.history.push(login),
           }}
           image="https://cdn.shopify.com/s/assets/admin/empty-states-fresh/orders-d51d6203328a3554667b97f194a687e93a5d5a94dbb6406dce81219afab4625f.svg"
         >

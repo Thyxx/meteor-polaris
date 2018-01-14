@@ -9,10 +9,10 @@ import Signup from '../components/forms/signup';
 import LoginComponent from '../components/forms/login';
 
 export default class Login extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      login: true,
+      login: props.location.state ? props.location.state.login : true,
     };
   }
 
@@ -53,4 +53,5 @@ export default class Login extends Component {
 
 Login.propTypes = {
   history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
 };

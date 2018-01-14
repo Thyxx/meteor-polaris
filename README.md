@@ -17,7 +17,7 @@ To launch the project on your machine you first need to clone the repo.
 1) Open your terminal and run the following commands:
 
 ```
-git clone https://github.com/thomasKn/shopify-reporting.git
+git clone https://github.com/thomasKn/meteor-polaris.git
 ```
 
 ```

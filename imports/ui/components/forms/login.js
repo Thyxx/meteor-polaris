@@ -6,7 +6,6 @@ import {
   TextField,
   FormLayout,
   Button,
-  Icon,
 } from '@shopify/polaris';
 import yup from 'yup';
 import handleLogin from '../../../modules/login';

@@ -4,8 +4,6 @@ import { Meteor } from 'meteor/meteor';
 import {
   Page,
   Layout,
-  FooterHelp,
-  Link,
   SettingToggle,
   Banner,
 } from '@shopify/polaris';

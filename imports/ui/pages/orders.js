@@ -52,7 +52,10 @@ export default class Orders extends Component {
           }}
           image="https://cdn.shopify.com/s/assets/admin/empty-states-fresh/emptystate-products-fa2065ec7520b72d7a7572b5ce4bab1115bc90a4a6d0b609fd68ab67ad823c65.svg"
         >
-          <p>You do not have any Shopify store connected yet. You need to add a store from the settings instance to import your orders.</p>
+          <p>
+          You do not have any Shopify store connected yet.
+          You need to add a store from the settings instance to import your orders.
+          </p>
         </EmptyState>
       </Page>
     );

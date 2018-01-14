@@ -74,9 +74,10 @@ Meteor.methods({
     }
     throw new Meteor.Error('Not allowed.');
   },
-  'shopify.getOrders': async function (page, searchValue) {
+  'shopify.getOrders': async function (page, searchValue, filters) {
     check(page, Number);
     check(searchValue, String);
+    check(filters, Object);
     if (this.userId) {
       const stores = Stores.find({ owner: this.userId }).fetch();
       let orders = [];
@@ -87,8 +88,8 @@ Meteor.methods({
         });
         const array = await shopify.order.list({
           page,
-          status: 'any',
-          financial_status: 'any',
+          status: filters.status,
+          financial_status: filters.financial_status,
           name: searchValue,
           fields: [
             'created_at',

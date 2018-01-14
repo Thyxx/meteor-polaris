@@ -7,15 +7,32 @@ import {
 import OrdersListContainer from '../containers/ordersListContainer';
 
 export default class Orders extends Component {
+  constructor() {
+    super();
+    this.state = {
+      reRender: false,
+    };
+  }
+
   render() {
+    console.log('render page');
     return (
       <Page
         title="Orders"
-        primaryAction={{ content: 'Refresh', icon: 'refresh', disabled: true }}
+        primaryAction={{
+          content: 'Refresh',
+          icon: 'refresh',
+          onAction: () => {
+            this.setState({ reRender: !this.state.reRender });
+          },
+        }}
       >
         <Layout>
           <Layout.Section>
-            <OrdersListContainer stores={this.props.stores}/>
+            <OrdersListContainer
+              re-render={this.state.reRender}
+              stores={this.props.stores}
+            />
           </Layout.Section>
         </Layout>
       </Page>

@@ -6,6 +6,14 @@ This project aims to help anyone to create a Shopify app with Meteor JS.
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
+### Features
+
+* User authentication with Meteor
+* Connect multiple Shopify stores
+* Import orders from multiple Shopify stores
+* Filter orders based on order and financial status
+* Search orders with order number
+
 ### Prerequisites
 
 Before getting started you need to install [Node](https://nodejs.org/en/) and [Meteor](https://www.meteor.com/) on your local machine. You also need to create a [Shopify Partner](https://help.shopify.com/api/getting-started) account and create a new Shopify app.

@@ -22,7 +22,7 @@ const signup = () => {
       Bert.alert(error.reason, 'danger');
     } else {
       Bert.alert('Welcome!', 'success');
-      component.props.redirect('/settings');
+      component.props.redirect('/');
     }
   });
 };

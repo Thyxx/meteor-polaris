@@ -18,9 +18,6 @@ export default class AuthenticatedAppBar extends Component {
               <Link to='/'><p style={{ color: 'white', fontSize: '16px', fontWeight: '600' }}>Shopify Manager</p></Link>
             </Stack.Item>
             <Stack.Item>
-              <Link to='/orders'><p style={{ color: 'white', fontSize: '16px' }}>Orders</p></Link>
-            </Stack.Item>
-            <Stack.Item>
               <Link to='/settings'><p style={{ color: 'white', fontSize: '16px' }}>Settings</p></Link>
             </Stack.Item>
             <Stack.Item>

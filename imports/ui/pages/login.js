@@ -39,7 +39,8 @@ export default class Login extends Component {
   render() {
     return (
       <Page
-        title="Login"
+        title="Log in"
+        separator
       >
         <Divider height={20}/>
         <Layout>

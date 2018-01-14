@@ -18,7 +18,14 @@ const App = props => (
     {!props.loading ? <div className="App">
       <AppBar {...props}/>
       <Switch>
-        <Route exact name="index" path="/" component={Index}/>
+        <Route
+          exact
+          name="index"
+          path="/"
+          render={
+            routeProps => (<Index {...routeProps} {...props} />)
+          }
+        />
         <Authenticated exact path="/orders" component={Orders} {...props}/>
         <Authenticated exact path="/settings" component={Settings} {...props}/>
         <Authenticated exact path="/callback/" component={Callback} {...props}/>

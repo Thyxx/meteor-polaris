@@ -14,7 +14,7 @@ export default class PublicAppBar extends Component {
               <Link to='/'><p style={{ color: 'white', fontSize: '16px', fontWeight: '600' }}>Shopify Manager</p></Link>
             </Stack.Item>
             <Stack.Item>
-              <Link to='/login'><p style={{ color: 'white', fontSize: '16px' }}>Login</p></Link>
+              <Link to='/login'><p style={{ color: 'white', fontSize: '16px' }}>Log in</p></Link>
             </Stack.Item>
           </Stack>
         </div>

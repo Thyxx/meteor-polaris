@@ -51,6 +51,7 @@ export default class Settings extends Component {
     return (
       <Page
         title="Settings"
+        separator
       >
         <Layout>
           <Layout.AnnotatedSection

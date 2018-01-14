@@ -103,7 +103,6 @@ export default class Login extends Component {
             <FormLayout>
               <div style={{ width: '460px' }}></div>
               <TextField
-                prefix={<Icon color={'inkLightest'} source="circlePlus" />}
                 value={email.value}
                 label="Email"
                 type="email"
@@ -113,7 +112,6 @@ export default class Login extends Component {
                 error={!email.focus && !email.valid && email.value.length > 0 ? 'Use a valid email address.' : false}
               />
               <TextField
-                prefix={<Icon color={'inkLightest'} source="search" />}
                 value={password.value}
                 label="Password"
                 type="password"

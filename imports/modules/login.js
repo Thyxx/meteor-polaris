@@ -12,7 +12,7 @@ export default function handleSignup(options) {
       Bert.alert(error.reason, 'danger');
     } else {
       Bert.alert('Logged in!', 'success');
-      component.props.redirect('/settings');
+      component.props.redirect('/');
     }
   });
 }
